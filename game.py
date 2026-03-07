@@ -9,6 +9,8 @@ from game_over_state import GameOverState
 from leaderboard_state import LeaderboardState
 
 BAUD_RATE = 115200
+DEAD_ZONE = 0.1
+JOYSTICK_MAX = 1024
 
 class Game:
     def __init__(self, width=320, height=180, title="Fan Jumper"):
@@ -120,9 +122,15 @@ class Game:
                 try:
                     data = json.loads(candidate)
                     if 'x' in data:
-                        self.controller['x'] = data['x']
+                        x = (data['x'] / JOYSTICK_MAX) - 0.5
+                        if (abs(x) < DEAD_ZONE):
+                            x = 0
+                        self.controller['x'] = x
                     if 'y' in data:
-                        self.controller['y'] = data['y']
+                        y = (data['y'] / JOYSTICK_MAX) - 0.5
+                        if (abs(y) < DEAD_ZONE):
+                            y = 0
+                        self.controller['y'] = y
                     if 'button' in data:
                         self.controller['button'] = data['button']
                     print(f"Controller: {self.controller}")  # Remove once confirmed working
