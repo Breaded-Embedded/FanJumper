@@ -58,3 +58,9 @@ class Player:
 
         player_screen_x = self.rect.x - camera_x
         screen.blit(sprite, (player_screen_x, self.rect.y))
+
+        if self.state == PlayerState.WALKING:
+            # Draw propeller
+            hat_frame = int(runtime * 4.0) % len(self.hat_animation)
+            sprite = self.hat_animation[hat_frame]
+            screen.blit(sprite, (player_screen_x, self.rect.y + (1 if frame == 1 else 0)))

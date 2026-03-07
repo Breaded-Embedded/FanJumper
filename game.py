@@ -75,9 +75,9 @@ class Game:
             sprites['player_0'] = pygame.image.load('assets/sprites/player_0.png').convert_alpha()
             sprites['player_1'] = pygame.image.load('assets/sprites/player_1.png').convert_alpha()
             sprites['hat_0'] = pygame.image.load('assets/sprites/hat_0.png').convert_alpha()
-            sprites['hat_1'] = pygame.image.load('assets/sprites/hat_0.png').convert_alpha()
+            sprites['hat_1'] = pygame.image.load('assets/sprites/hat_1.png').convert_alpha()
             sprites['flying_0'] = pygame.image.load('assets/sprites/flying_0.png').convert_alpha()
-            sprites['flying_1'] = pygame.image.load('assets/sprites/flying_0.png').convert_alpha()
+            sprites['flying_1'] = pygame.image.load('assets/sprites/flying_1.png').convert_alpha()
         except pygame.error as e:
             print(f"Error loading image: {e}")
             # Handle the error or exit the game
