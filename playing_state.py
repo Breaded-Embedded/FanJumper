@@ -42,7 +42,7 @@ class PlayingState(GameState):
 
         for p in self.platforms:
             if pygame.Rect.colliderect(p.rect, self.player.rect):
-                if self.player.vel_y >= 0:
+                if self.player.vel_y >= 0 and self.player.rect.bottom - self.player.vel_y <= p.rect.top:
                     self.player.rect.bottom = p.rect.top
                     self.player.vel_y = 0
                     self.player.on_ground = True
