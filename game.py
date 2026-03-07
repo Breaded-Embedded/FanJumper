@@ -2,8 +2,8 @@ import pygame
 import random
 
 # --- Config ---
-WIDTH = 400
-HEIGHT = 600
+WIDTH = 1920
+HEIGHT = 1080
 FPS = 60
 
 GRAVITY = 0.5
