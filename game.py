@@ -28,6 +28,8 @@ class Game:
         # Load resources
         self.font = pygame.font.Font("assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 8)
         self.sprites = self.load_sprites()
+        pygame.mixer.music.load("assets/music/DayAndNight.wav")
+        pygame.mixer.music.play()
 
         # Create game states
         self.states = {
