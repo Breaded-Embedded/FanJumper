@@ -67,6 +67,7 @@ class Game:
     def change_state(self, new_state):
         self.current_state = new_state
         self.current_state.reset()
+        self.current_state.enter()
 
     def load_sprites(self):
         sprites = {}

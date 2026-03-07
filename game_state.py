@@ -21,6 +21,9 @@ class GameState:
     def reset(self):
         pass
 
+    def enter(self):
+        pass
+
     def update(self):
         pass
 

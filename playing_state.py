@@ -4,7 +4,7 @@ import pygame
 
 from game_state import GameState
 from player import Player
-from platform import Platform
+from floating_platform import Platform
 
 
 class PlayingState(GameState):
