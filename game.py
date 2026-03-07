@@ -5,7 +5,6 @@ from playing_state import PlayingState
 from game_over_state import GameOverState
 from leaderboard_state import LeaderboardState
 
-
 class Game:
     def __init__(self, width=320, height=180, title="Fan Jumper"):
         pygame.init()
@@ -45,6 +44,7 @@ class Game:
     def change_state(self, new_state):
         self.current_state = new_state
         self.current_state.reset()
+        self.current_state.enter()
 
     def load_sprites(self):
         sprites = {}
