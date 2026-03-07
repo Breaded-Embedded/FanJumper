@@ -1,18 +1,14 @@
 import json
-
 import pygame
 import serial
 import serial.tools.list_ports
-
 
 from press_start_state import PressStartState
 from playing_state import PlayingState
 from game_over_state import GameOverState
 from leaderboard_state import LeaderboardState
 
-
-BAUD_RATE = 115220
-
+BAUD_RATE = 115200
 
 class Game:
     def __init__(self, width=320, height=180, title="Fan Jumper"):
@@ -24,7 +20,6 @@ class Game:
 
         # Resizable window
         self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
-
         pygame.display.set_caption(self.title)
 
         # Internal render surface
@@ -33,15 +28,20 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        # Serial controller input state
+        self.controller = {"x": 0, "y": 0, "button": 0}
+        self._serial_buf = ""
+
         print("AVAILABLE PORTS:")
         ports = serial.tools.list_ports.comports()
         for port, desc, hwid in sorted(ports):
-                print(f" - {port}: {desc} [{hwid}]")
+            print(f" - {port}: {desc} [{hwid}]")
 
         try:
-            self.serial = serial.Serial("COM3", BAUD_RATE)
+            self.serial = serial.Serial("/dev/ttyACM0", BAUD_RATE, timeout=0)
+            print("Serial connected on /dev/ttyACM0")
         except serial.SerialException as e:
-            print(e)
+            print(f"Serial connection failed: {e}")
             self.serial = None
 
         # Load resources
@@ -57,7 +57,7 @@ class Game:
             'game_over': GameOverState(self),
             'leaderboard': LeaderboardState(self)
         }
-        
+
         # Set current state
         self.change_state(self.states['press_start'])
 
@@ -80,26 +80,65 @@ class Game:
             sprites['flying_1'] = pygame.image.load('assets/sprites/flying_1.png').convert_alpha()
         except pygame.error as e:
             print(f"Error loading image: {e}")
-            # Handle the error or exit the game
             pygame.quit()
             exit()
         return sprites
 
+    def read_serial(self):
+        """Non-blocking serial read. Accumulates chars into a buffer,
+        parses complete JSON objects, and updates self.controller."""
+        if not self.serial or not self.serial.is_open:
+            return
+
+        try:
+            bytes_waiting = self.serial.in_waiting
+            if bytes_waiting == 0:
+                return
+
+            chunk = self.serial.read(bytes_waiting).decode('utf-8', errors='replace')
+            self._serial_buf += chunk
+
+            while '{' in self._serial_buf and '}' in self._serial_buf:
+                start = self._serial_buf.index('{')
+                end = self._serial_buf.index('}') + 1
+
+                if start > 0:
+                    garbage = self._serial_buf[:start]
+                    if garbage.strip():
+                        print(f"Discarding unexpected data: {repr(garbage)}")
+                    self._serial_buf = self._serial_buf[start:]
+                    end = self._serial_buf.index('}') + 1
+
+                candidate = self._serial_buf[:end]
+                self._serial_buf = self._serial_buf[end:]
+
+                try:
+                    data = json.loads(candidate)
+                    if 'x' in data:
+                        self.controller['x'] = data['x']
+                    if 'y' in data:
+                        self.controller['y'] = data['y']
+                    if 'button' in data:
+                        self.controller['button'] = data['button']
+                    print(f"Controller: {self.controller}")  # Remove once confirmed working
+                except json.JSONDecodeError:
+                    print(f"Invalid JSON: {repr(candidate)}")
+
+        except serial.SerialException as e:
+            print(f"Serial read error: {e}")
+            self.serial = None
+
     def render_scaled(self):
         win_w, win_h = self.window.get_size()
 
-        # Maintain aspect ratio
         scale = min(win_w / self.width, win_h / self.height)
-
         scaled_w = int(self.width * scale)
         scaled_h = int(self.height * scale)
 
-        # Center the image
         x = (win_w - scaled_w) // 2
         y = (win_h - scaled_h) // 2
 
         scaled_surface = pygame.transform.scale(self.screen, (scaled_w, scaled_h))
-
         self.window.fill((0, 0, 0))  # black bars
         self.window.blit(scaled_surface, (x, y))
 
@@ -110,16 +149,9 @@ class Game:
                     self.running = False
                 else:
                     self.current_state.handle_event(event)
-            
-            if self.serial is not None:
-                # Read input from the Arduino
-                line = self.serial.readline().decode('utf-8').strip()
-                print(f"'{line}'")
-                try:
-                    data = json.loads(line)
-                    print("Received:", data)
-                except json.JSONDecodeError:
-                    print("Invalid JSON:", line)
+
+            # Non-blocking serial read — updates self.controller if new data arrived
+            self.read_serial()
 
             self.current_state.update()
             self.current_state.draw()
@@ -129,6 +161,8 @@ class Game:
             self.delta_time = self.clock.tick(60) / 1000.0
             self.runtime += self.delta_time
 
+        if self.serial and self.serial.is_open:
+            self.serial.close()
         pygame.quit()
 
 

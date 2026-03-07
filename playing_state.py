@@ -38,7 +38,7 @@ class PlayingState(GameState):
         self.last_platform_x = x + width
 
     def update(self):
-        self.player.update()
+        self.player.update(self.game.controller)
 
         for p in self.platforms:
             if pygame.Rect.colliderect(p.rect, self.player.rect):
