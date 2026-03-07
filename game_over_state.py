@@ -12,6 +12,9 @@ class GameOverState(GameState):
     def update(self):
         self.timer += 1
 
+        if abs(self.game.controller['x']) > 0.0:
+            self.game.change_state(self.game.states['leaderboard'])
+
     def draw(self):
         # Draw the frozen gameplay behind the overlay
         self.game.states['playing'].draw()

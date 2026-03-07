@@ -21,6 +21,8 @@ class PlayingState(GameState):
 
         self.player.rect.x = 50
         self.player.rect.y = self.game.height - 30
+        self.player.vel_x = 0
+        self.player.vel_y = 0
         
         for _ in range(4):
             self.spawn_platform()
@@ -63,7 +65,7 @@ class PlayingState(GameState):
         ]
 
         # game over condition
-        if self.player.rect.y > self.game.height + 50:
+        if self.player.rect.y > self.game.height + 50 or self.player.rect.y < -200:
             self.game.change_state(self.game.states['game_over'])
         
         self.score = int(self.camera_x / 10)

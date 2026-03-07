@@ -2,6 +2,7 @@ import json
 import pygame
 import serial
 import serial.tools.list_ports
+import math
 
 from press_start_state import PressStartState
 from playing_state import PlayingState
@@ -11,6 +12,9 @@ from leaderboard_state import LeaderboardState
 BAUD_RATE = 115200
 DEAD_ZONE = 0.1
 JOYSTICK_MAX = 1024
+
+FAN_MIN = 10
+FAN_MAX = 100
 
 class Game:
     def __init__(self, width=320, height=180, title="Fan Jumper"):
@@ -42,10 +46,11 @@ class Game:
         port = None
         self.serial = None
         if len(ports) > 0:
-            port = ports[0]
+            _,_,hwid = ports[0]
+            print(f"Connecting to port {port}")
 
             try:
-                self.serial = serial.Serial(port, BAUD_RATE, timeout=0)
+                self.serial = serial.Serial('COM3', BAUD_RATE, timeout=0)
                 print(f"Serial connected on {port}")
             except serial.SerialException as e:
                 print(f"Serial connection failed: {e}")
@@ -122,14 +127,13 @@ class Game:
                 try:
                     data = json.loads(candidate)
                     if 'x' in data:
-                        x = (data['x'] / JOYSTICK_MAX) - 0.5
+                        x = ((data['x'] / JOYSTICK_MAX) - 0.5) * 2.0
                         if (abs(x) < DEAD_ZONE):
                             x = 0
                         self.controller['x'] = x
                     if 'y' in data:
-                        y = (data['y'] / JOYSTICK_MAX) - 0.5
-                        if (abs(y) < DEAD_ZONE):
-                            y = 0
+                        y = data['y']
+                        y = min(max((y - FAN_MIN) / (FAN_MAX - FAN_MIN), 0.0), 1.0)
                         self.controller['y'] = y
                     if 'button' in data:
                         self.controller['button'] = data['button']

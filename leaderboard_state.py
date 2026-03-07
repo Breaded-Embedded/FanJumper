@@ -29,7 +29,8 @@ class LeaderboardState(GameState):
         self.add_user_score(self.curr_username, self.curr_score)
 
     def update(self):
-        pass
+        if abs(self.game.controller['x']) > 0.0:
+            self.game.change_state(self.game.states['leaderboard'])
 
     def add_user_score(self, username, score):
         self.leaderboard[username] = int(score)

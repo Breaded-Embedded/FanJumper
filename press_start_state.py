@@ -7,7 +7,8 @@ class PressStartState(GameState):
         pass
 
     def update(self):
-        pass
+        if abs(self.game.controller['x']) > 0.0:
+            self.game.change_state(self.game.states['leaderboard'])
 
     def draw(self):
         self.game.states['playing'].draw()

@@ -18,7 +18,8 @@ class Player:
         self.vel_y = 0
         self.gravity = 0.4
         self.move_speed = 3
-        self.fly_strength = -0.5
+        self.fly_strength = 0.5
+        self.fly_ratio = 0.15
         self.dir = 1
 
         self.on_ground = False
@@ -29,10 +30,10 @@ class Player:
         self.hat_animation = [sprites['hat_0'], sprites['hat_1']]
 
     def update(self, controller, delta_time = 0.0):
-        keys = pygame.key.get_pressed()
-
         # Horizontal movement
-        self.vel_x = 0
+        if self.on_ground:
+            self.vel_x = 0
+
         if abs(controller['x']) > 0.0:
             self.vel_x = controller['x'] * self.move_speed
             if controller['x'] > 0.0:
@@ -42,7 +43,8 @@ class Player:
         
         # Jump
         if (controller['y'] > 0.0):
-            self.vel_y += self.fly_strength
+            self.vel_y -= self.fly_strength
+            self.vel_x += self.fly_strength * self.fly_ratio
             self.state = PlayerState.FLYING
             self.on_ground = False
         else:
@@ -50,7 +52,7 @@ class Player:
 
         # Apply gravity
         self.vel_y += self.gravity
-
+        
         # Apply movement
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
