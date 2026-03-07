@@ -8,17 +8,23 @@ from platform import Platform
 
 
 class PlayingState(GameState):
-    def reset(self):
+    def init(self):
         self.player = Player(self.game.sprites['player'], 200, 100)
 
-        self.platforms = []
-        self.last_platform_x = 0
+    def reset(self):
+        starting_platform = Platform(0, self.game.height-10, 130, 10)
+        self.platforms = [starting_platform]
+        self.last_platform_x = starting_platform.rect.x + starting_platform.rect.width
+
         self.camera_x = 0
         self.score = int(self.camera_x / 10)
+
+        self.player.rect.x = 50
+        self.player.rect.y = self.game.height - 50
         
         for _ in range(4):
             self.spawn_platform()
-    
+
     def spawn_platform(self):
         gap = random.randint(40, 90)
         width = random.randint(40, 80)
@@ -44,7 +50,7 @@ class PlayingState(GameState):
         # camera follow
         center = self.game.width // 2
         if self.player.rect.x - self.camera_x > center:
-            self.camera_x = self.player.rect.x - center
+            self.camera_x = max(self.player.rect.x - center, 0)
 
         # spawn platforms
         while self.last_platform_x < self.camera_x + self.game.width * 2:

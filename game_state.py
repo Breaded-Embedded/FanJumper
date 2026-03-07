@@ -12,7 +12,11 @@ class GameStates(Enum):
 class GameState:
     def __init__(self, game):
         self.game = game
+        self.init()
         self.reset()
+        
+    def init(self):
+        pass
 
     def reset(self):
         pass
