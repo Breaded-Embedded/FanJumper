@@ -32,13 +32,12 @@ class Player:
 
         # Horizontal movement
         self.vel_x = 0
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-            self.vel_x = -self.move_speed
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-            self.vel_x = self.move_speed
+        if abs(controller['x']) > 0.0:
+            self.vel_x = controller['x'] * self.move_speed
+            print("moving")
         
         # Jump
-        if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]) and self.on_ground:
+        if (controller['y'] > 0.0) and self.on_ground:
             self.vel_y = self.jump_strength
             self.on_ground = False
 

@@ -178,6 +178,7 @@ class Game:
                 # Jump
                 if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]):
                     self.controller['y'] = 1
+                print(f"Controller (keyboard): {self.controller}")
 
             # Non-blocking serial read — updates self.controller if new data arrived
             self.read_serial()
