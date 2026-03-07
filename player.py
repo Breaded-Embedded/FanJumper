@@ -1,10 +1,17 @@
 import pygame
 
+from enum import Enum
+import math
+
+class PlayerState(Enum):
+    WALKING = 0
+    FLYING = 1
+
 
 class Player:
-    def __init__(self, sprite: pygame.Surface, x=100, y=100):
-        self.sprite = sprite
-        self.rect = self.sprite.get_rect(topleft=(x, y))
+    def __init__(self, sprites: list[pygame.Surface], x=100, y=100):
+        self.sprites = sprites
+        self.rect = self.sprites['player_0'].get_rect(topleft=(x, y))
 
         # physics
         self.vel_x = 0
@@ -15,7 +22,12 @@ class Player:
 
         self.on_ground = False
 
-    def update(self, ground_y = 1000):
+        self.state = PlayerState.WALKING
+        self.bob_animation = [sprites['player_0'], sprites['player_1']]
+        self.flying_animation = [sprites['flying_0'], sprites['flying_1']]
+        self.hat_animation = [sprites['hat_0'], sprites['hat_1']]
+
+    def update(self, delta_time = 0.0):
         keys = pygame.key.get_pressed()
 
         # Horizontal movement
@@ -37,11 +49,12 @@ class Player:
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
-        # Simple ground collision
-        if self.rect.bottom >= ground_y:
-            self.rect.bottom = ground_y
-            self.vel_y = 0
-            self.on_ground = True
+    def draw(self, screen, camera_x: float, delta_time = 0.0, runtime = 0.0):
+        sprite = self.sprites['player_0']
 
-    def draw(self, screen):
-        screen.blit(self.sprite, self.rect)
+        if self.state == PlayerState.WALKING:
+            frame = int(runtime * 4.0) % len(self.bob_animation)
+            sprite = self.bob_animation[frame]
+
+        player_screen_x = self.rect.x - camera_x
+        screen.blit(sprite, (player_screen_x, self.rect.y))

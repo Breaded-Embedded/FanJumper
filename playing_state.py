@@ -9,7 +9,7 @@ from platform import Platform
 
 class PlayingState(GameState):
     def init(self):
-        self.player = Player(self.game.sprites['player'], 200, 100)
+        self.player = Player(self.game.sprites, 200, 100)
 
     def reset(self):
         starting_platform = Platform(0, self.game.height-10, 130, 10)
@@ -76,11 +76,10 @@ class PlayingState(GameState):
             pygame.draw.rect(self.game.screen, (60, 60, 60),
                             (screen_x, p.rect.y, p.rect.w, p.rect.h))
 
-        player_screen_x = self.player.rect.x - self.camera_x
-        self.game.screen.blit(self.player.sprite,
-                        (player_screen_x, self.player.rect.y))
+        self.player.draw(self.game.screen, self.camera_x, self.game.delta_time, self.game.runtime)
         
         # draw score
         text = self.game.font.render(f"{self.score}m", True, (255, 255, 255))
         rect = text.get_rect(center=(self.game.width//2, 20))
         self.game.screen.blit(text, rect)
+

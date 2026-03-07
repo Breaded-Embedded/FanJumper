@@ -38,7 +38,11 @@ class Game:
         for port, desc, hwid in sorted(ports):
                 print(f" - {port}: {desc} [{hwid}]")
 
-        self.serial = serial.Serial("COM3", BAUD_RATE)
+        try:
+            self.serial = serial.Serial("COM3", BAUD_RATE)
+        except serial.SerialException as e:
+            print(e)
+            self.serial = None
 
         # Load resources
         self.font = pygame.font.Font("assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 8)
@@ -56,6 +60,9 @@ class Game:
         
         # Set current state
         self.change_state(self.states['press_start'])
+
+        self.delta_time = 0.0
+        self.runtime = 0.0
 
     def change_state(self, new_state):
         self.current_state = new_state
@@ -103,21 +110,23 @@ class Game:
                 else:
                     self.current_state.handle_event(event)
             
-            # Read input from the Arduino
-            line = self.serial.readline().decode('utf-8').strip()
-            print(f"'{line}'")
-            try:
-                data = json.loads(line)
-                print("Received:", data)
-            except json.JSONDecodeError:
-                print("Invalid JSON:", line)
+            if self.serial is not None:
+                # Read input from the Arduino
+                line = self.serial.readline().decode('utf-8').strip()
+                print(f"'{line}'")
+                try:
+                    data = json.loads(line)
+                    print("Received:", data)
+                except json.JSONDecodeError:
+                    print("Invalid JSON:", line)
 
             self.current_state.update()
             self.current_state.draw()
             self.render_scaled()
 
             pygame.display.flip()
-            self.clock.tick(60)
+            self.delta_time = self.clock.tick(60) / 1000.0
+            self.runtime += self.delta_time
 
         pygame.quit()
 
