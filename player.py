@@ -18,7 +18,8 @@ class Player:
         self.vel_y = 0
         self.gravity = 0.4
         self.move_speed = 3
-        self.jump_strength = -8
+        self.fly_strength = -0.5
+        self.dir = 1
 
         self.on_ground = False
 
@@ -34,11 +35,14 @@ class Player:
         self.vel_x = 0
         if abs(controller['x']) > 0.0:
             self.vel_x = controller['x'] * self.move_speed
-            print("moving")
+            if controller['x'] > 0.0:
+                self.dir = 1
+            elif controller['x'] < 0.0:
+                self.dir = -1
         
         # Jump
-        if (controller['y'] > 0.0) and self.on_ground:
-            self.vel_y = self.jump_strength
+        if (controller['y'] > 0.0):
+            self.vel_y += self.fly_strength
             self.on_ground = False
 
         # Apply gravity
@@ -56,10 +60,10 @@ class Player:
             sprite = self.bob_animation[frame]
 
         player_screen_x = self.rect.x - camera_x
-        screen.blit(sprite, (player_screen_x, self.rect.y))
+        screen.blit(pygame.transform.flip(sprite, self.dir == -1, False), (player_screen_x, self.rect.y))
 
         if self.state == PlayerState.WALKING:
             # Draw propeller
             hat_frame = int(runtime * 4.0) % len(self.hat_animation)
             sprite = self.hat_animation[hat_frame]
-            screen.blit(sprite, (player_screen_x, self.rect.y + (1 if frame == 1 else 0)))
+            screen.blit(pygame.transform.flip(sprite, self.dir == -1, False), (player_screen_x, self.rect.y + (1 if frame == 1 else 0)))
