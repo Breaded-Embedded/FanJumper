@@ -1,9 +1,17 @@
+import json
+
 import pygame
+import serial
+import serial.tools.list_ports
+
 
 from press_start_state import PressStartState
 from playing_state import PlayingState
 from game_over_state import GameOverState
 from leaderboard_state import LeaderboardState
+
+
+BAUD_RATE = 115220
 
 
 class Game:
@@ -24,6 +32,13 @@ class Game:
 
         self.clock = pygame.time.Clock()
         self.running = True
+
+        print("AVAILABLE PORTS:")
+        ports = serial.tools.list_ports.comports()
+        for port, desc, hwid in sorted(ports):
+                print(f" - {port}: {desc} [{hwid}]")
+
+        self.serial = serial.Serial("COM3", BAUD_RATE)
 
         # Load resources
         self.font = pygame.font.Font("assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 8)
@@ -82,7 +97,16 @@ class Game:
                     self.running = False
                 else:
                     self.current_state.handle_event(event)
-                
+            
+            # Read input from the Arduino
+            line = self.serial.readline().decode('utf-8').strip()
+            print(f"'{line}'")
+            try:
+                data = json.loads(line)
+                print("Received:", data)
+            except json.JSONDecodeError:
+                print("Invalid JSON:", line)
+
             self.current_state.update()
             self.current_state.draw()
             self.render_scaled()
