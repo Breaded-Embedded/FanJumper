@@ -37,12 +37,17 @@ class Game:
         for port, desc, hwid in sorted(ports):
             print(f" - {port}: {desc} [{hwid}]")
 
-        try:
-            self.serial = serial.Serial("/dev/ttyACM0", BAUD_RATE, timeout=0)
-            print("Serial connected on /dev/ttyACM0")
-        except serial.SerialException as e:
-            print(f"Serial connection failed: {e}")
-            self.serial = None
+        port = None
+        self.serial = None
+        if len(ports) > 0:
+            port = ports[0]
+
+            try:
+                self.serial = serial.Serial(port, BAUD_RATE, timeout=0)
+                print(f"Serial connected on {port}")
+            except serial.SerialException as e:
+                print(f"Serial connection failed: {e}")
+                self.serial = None
 
         # Load resources
         self.font = pygame.font.Font("assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 8)

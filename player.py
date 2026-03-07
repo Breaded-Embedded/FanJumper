@@ -30,17 +30,17 @@ class Player:
     def update(self, controlloer, delta_time = 0.0):
         keys = pygame.key.get_pressed()
 
-        # # Horizontal movement
-        # self.vel_x = 0
-        # if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-        #     self.vel_x = -self.move_speed
-        # if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-        #     self.vel_x = self.move_speed
-        #
-        # # Jump
-        # if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]) and self.on_ground:
-        #     self.vel_y = self.jump_strength
-        #     self.on_ground = False
+        # Horizontal movement
+        self.vel_x = 0
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+            self.vel_x = -self.move_speed
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+            self.vel_x = self.move_speed
+        
+        # Jump
+        if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]) and self.on_ground:
+            self.vel_y = self.jump_strength
+            self.on_ground = False
 
         # Apply gravity
         self.vel_y += self.gravity
