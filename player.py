@@ -43,7 +43,10 @@ class Player:
         # Jump
         if (controller['y'] > 0.0):
             self.vel_y += self.fly_strength
+            self.state = PlayerState.FLYING
             self.on_ground = False
+        else:
+            self.state = PlayerState.WALKING
 
         # Apply gravity
         self.vel_y += self.gravity
@@ -58,6 +61,9 @@ class Player:
         if self.state == PlayerState.WALKING:
             frame = int(runtime * 4.0) % len(self.bob_animation)
             sprite = self.bob_animation[frame]
+        elif self.state == PlayerState.FLYING:
+            frame = int(runtime * 8.0) % len(self.flying_animation)
+            sprite = self.flying_animation[frame]
 
         player_screen_x = self.rect.x - camera_x
         screen.blit(pygame.transform.flip(sprite, self.dir == -1, False), (player_screen_x, self.rect.y))
