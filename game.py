@@ -163,6 +163,22 @@ class Game:
                 else:
                     self.current_state.handle_event(event)
 
+            if self.serial is None:
+                keys = pygame.key.get_pressed()
+
+                self.controller['x'] = 0
+                self.controller['y'] = 0
+
+                # Horizontal movement
+                if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                    self.controller['x'] = -1
+                if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                    self.controller['x'] = 1
+                
+                # Jump
+                if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]):
+                    self.controller['y'] = 1
+
             # Non-blocking serial read — updates self.controller if new data arrived
             self.read_serial()
 

@@ -27,7 +27,7 @@ class Player:
         self.flying_animation = [sprites['flying_0'], sprites['flying_1']]
         self.hat_animation = [sprites['hat_0'], sprites['hat_1']]
 
-    def update(self, controlloer, delta_time = 0.0):
+    def update(self, controller, delta_time = 0.0):
         keys = pygame.key.get_pressed()
 
         # Horizontal movement
