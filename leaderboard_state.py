@@ -1,6 +1,7 @@
 import pygame
 import pandas as pd
 import os
+import csv
 
 from game_state import GameState
 
@@ -11,6 +12,11 @@ class LeaderboardState(GameState):
     def __init__(self, game):
         super().__init__(game)
         self.leaderboard_file = LEADERBOARD_FILE
+        os.makedirs(os.path.dirname(self.leaderboard_file), exist_ok=True)
+        if not os.path.exists(self.leaderboard_file):
+            with open(self.leaderboard_file, 'w', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerow(['username', 'score'])
         self.leaderboard = self.read_leaderboard_data()
         self.curr_score = 0
         self.curr_username = "Player" + str(len(self.leaderboard))
@@ -62,8 +68,16 @@ class LeaderboardState(GameState):
             self.game.change_state(self.game.states['press_start'])
 
     def read_leaderboard_data(self):
-        df = pd.read_csv(self.leaderboard_file)
-        return pd.Series(df.score.values, index=df.username).to_dict()
+        if os.path.exists(self.leaderboard_file) and os.path.getsize(self.leaderboard_file) > 0:
+            try:
+                df = pd.read_csv(self.leaderboard_file)
+                if df.empty:
+                    return {}
+                return pd.Series(df.score.values, index=df.username).to_dict()
+            except pd.errors.EmptyDataError:
+                return {}
+        else:
+            return {}
 
     def write_leaderboard_data(self):
         df = pd.DataFrame(list(self.leaderboard.items()), columns=['username', 'score'])
