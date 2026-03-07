@@ -20,7 +20,7 @@ class PlayingState(GameState):
         self.score = int(self.camera_x / 10)
 
         self.player.rect.x = 50
-        self.player.rect.y = self.game.height - 50
+        self.player.rect.y = self.game.height - 30
         
         for _ in range(4):
             self.spawn_platform()
