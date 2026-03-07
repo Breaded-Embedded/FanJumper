@@ -32,3 +32,6 @@ class GameState:
 
     def handle_event(self, event: pygame.event):
         pass
+
+    def handle_joystick_pressed(self):
+        pass

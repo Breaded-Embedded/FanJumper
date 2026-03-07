@@ -4,7 +4,7 @@ import pygame
 
 from game_state import GameState
 from player import Player
-from floating_platform import Platform
+from floating_platform import Platform, MovingPlatform
 
 
 class PlayingState(GameState):
@@ -34,7 +34,11 @@ class PlayingState(GameState):
         x = self.last_platform_x + gap
         y = random.randint(120, 170)
 
+        moving = random.random() > 0.9
+
         p = Platform(x, y, width, 7)
+        #if moving:
+        #    p = MovingPlatform()
 
         self.platforms.append(p)
         self.last_platform_x = x + width
@@ -48,6 +52,9 @@ class PlayingState(GameState):
                     self.player.rect.bottom = p.rect.top
                     self.player.vel_y = 0
                     self.player.on_ground = True
+
+        for p in self.platforms:
+            p.update()
 
         # camera follow
         center = self.game.width // 2
@@ -65,7 +72,7 @@ class PlayingState(GameState):
         ]
 
         # game over condition
-        if self.player.rect.y > self.game.height + 50 or self.player.rect.y < -200:
+        if self.player.rect.y > self.game.height + 50:
             self.game.change_state(self.game.states['game_over'])
         
         self.score = int(self.camera_x / 10)

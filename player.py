@@ -57,6 +57,10 @@ class Player:
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
+        if self.rect.y < 0.0:
+            self.rect.y = 0.0
+            self.vel_y = 0.0
+
     def draw(self, screen, camera_x: float, delta_time = 0.0, runtime = 0.0):
         sprite = self.sprites['player_0']
 

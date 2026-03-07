@@ -28,9 +28,8 @@ class LeaderboardState(GameState):
         self.curr_score = self.game.states["playing"].score
         self.add_user_score(self.curr_username, self.curr_score)
 
-    def update(self):
-        if abs(self.game.controller['x']) > 0.0:
-            self.game.change_state(self.game.states['leaderboard'])
+    def handle_joystick_pressed(self):
+        self.game.change_state(self.game.states['press_start'])
 
     def add_user_score(self, username, score):
         self.leaderboard[username] = int(score)

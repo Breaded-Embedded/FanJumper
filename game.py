@@ -25,7 +25,7 @@ class Game:
         self.title = title
 
         # Resizable window
-        self.window = pygame.display.set_mode((1280, 720), pygame.RESIZABLE)
+        self.window = pygame.display.set_mode((1280, 720), pygame.FULLSCREEN)
         pygame.display.set_caption(self.title)
 
         # Internal render surface
@@ -127,9 +127,13 @@ class Game:
                 try:
                     data = json.loads(candidate)
                     if 'x' in data:
+                        was_in_dead_zone = abs(data['x']) < DEAD_ZONE
                         x = ((data['x'] / JOYSTICK_MAX) - 0.5) * 2.0
                         if (abs(x) < DEAD_ZONE):
                             x = 0
+                        else:
+                            if was_in_dead_zone:
+                                self.current_state.handle_joystick_pressed()
                         self.controller['x'] = x
                     if 'y' in data:
                         y = data['y']
