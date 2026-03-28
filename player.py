@@ -49,13 +49,13 @@ class Player:
             self.on_ground = False
         else:
             self.state = PlayerState.WALKING
-
-        # Apply gravity
-        self.vel_y += self.gravity
         
         # Apply movement
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
+
+        # Apply gravity
+        self.vel_y += self.gravity
 
         if self.rect.y < 0.0:
             self.rect.y = 0.0
