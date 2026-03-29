@@ -2,11 +2,15 @@ import pygame
 import pandas as pd
 import os
 import csv
+import re
 
 from game_state import GameState
+import utils
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 LEADERBOARD_FILE = os.path.join(ROOT_DIR, 'data/leaderboard.csv')
+
+USERNAME_NUMBER_RE = re.compile(r'[^\d](\d+)$')
 
 class LeaderboardState(GameState):
     def __init__(self, game):
@@ -18,18 +22,26 @@ class LeaderboardState(GameState):
                 writer = csv.writer(f)
                 writer.writerow(['username', 'score'])
         self.leaderboard = self.read_leaderboard_data()
-        self.curr_score = 0
-        self.curr_username = "Player" + str(len(self.leaderboard))
 
     def reset(self):
         pass
 
     def enter(self):
-        self.curr_score = self.game.states["playing"].score
-        self.add_user_score(self.curr_username, self.curr_score)
+        self.current_username = self.generate_unique_username()
+        score = self.game.states["playing"].score
+        self.add_user_score(self.current_username, score)
 
     def handle_joystick_pressed(self):
         self.game.change_state(self.game.states['press_start'])
+
+    def generate_unique_username(self) -> str:
+        new_username = utils.generate_username()
+        while new_username in self.leaderboard:
+            m = USERNAME_NUMBER_RE.match(new_username)
+            if m:
+                number = m.group(1)
+                new_username[m.start(number):m.end(number)] = str(int(number) + 1)
+        return new_username
 
     def add_user_score(self, username, score):
         self.leaderboard[username] = int(score)
@@ -62,13 +74,13 @@ class LeaderboardState(GameState):
         for i, (username, score) in enumerate(sorted_leaderboard[:10]):
             color = (0, 0, 0)
 
-            if username == self.curr_username:
+            if username == self.current_username:
                 color = (255, 255, 0) if flash_on else (0, 0, 0)
 
             placement = i+1
             entry_string = self.format_column_string([
                 (f"{placement}.", 3),
-                (f"{username}", 8),
+                (f"{username}", 12),
                 (f"- {score}", 8)
                 ])
             entry_text = self.game.font.render(entry_string, True, color)
