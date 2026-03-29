@@ -1,51 +1,33 @@
 import pygame
-import pandas as pd
-import os
-import csv
 import re
 
 from game_state import GameState
 import utils
-
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-LEADERBOARD_FILE = os.path.join(ROOT_DIR, 'data/leaderboard.csv')
+import leaderboard
 
 USERNAME_NUMBER_RE = re.compile(r'[^\d](\d+)$')
 
 class LeaderboardState(GameState):
-    def __init__(self, game):
-        super().__init__(game)
-        self.leaderboard_file = LEADERBOARD_FILE
-        os.makedirs(os.path.dirname(self.leaderboard_file), exist_ok=True)
-        if not os.path.exists(self.leaderboard_file):
-            with open(self.leaderboard_file, 'w', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow(['username', 'score'])
-        self.leaderboard = self.read_leaderboard_data()
-
     def reset(self):
         pass
 
     def enter(self):
         self.current_username = self.generate_unique_username()
         score = self.game.states["playing"].score
-        self.add_user_score(self.current_username, score)
+        leaderboard.data[self.current_username] = int(score)
+        leaderboard.save()
 
     def handle_joystick_pressed(self):
         self.game.change_state(self.game.states['press_start'])
 
     def generate_unique_username(self) -> str:
         new_username = utils.generate_username()
-        while new_username in self.leaderboard:
+        while new_username in leaderboard.data:
             m = USERNAME_NUMBER_RE.match(new_username)
             if m:
                 number = m.group(1)
                 new_username[m.start(number):m.end(number)] = str(int(number) + 1)
         return new_username
-
-    def add_user_score(self, username, score):
-        self.leaderboard[username] = int(score)
-        self.write_leaderboard_data()
 
     def format_column_string(self, values: list[tuple[str, int]]) -> str:
         result = ""
@@ -64,7 +46,7 @@ class LeaderboardState(GameState):
         rect = text.get_rect(center=(self.game.width // 2, self.game.hud_height // 2))
         self.game.screen.blit(text, rect)
 
-        sorted_leaderboard = sorted(self.leaderboard.items(), key=lambda x: x[1], reverse=True)
+        sorted_leaderboard = sorted(leaderboard.data.items(), key=lambda x: x[1], reverse=True)
 
         start_y = 40
         spacing = 10
@@ -87,26 +69,10 @@ class LeaderboardState(GameState):
             entry_rect = entry_text.get_rect(center=(self.game.width // 2, start_y + i * spacing))
             self.game.screen.blit(entry_text, entry_rect)
 
-        instruction_text = self.game.font.render("Press any key to return", True, (100, 100, 100))
+        instruction_text = self.game.font.render("PRESS ANY KEY TO RETURN", True, (100, 100, 100))
         instruction_rect = instruction_text.get_rect(center=(self.game.width // 2, self.game.height - 20))
         self.game.screen.blit(instruction_text, instruction_rect)
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             self.game.change_state(self.game.states['press_start'])
-
-    def read_leaderboard_data(self):
-        if os.path.exists(self.leaderboard_file) and os.path.getsize(self.leaderboard_file) > 0:
-            try:
-                df = pd.read_csv(self.leaderboard_file)
-                if df.empty:
-                    return {}
-                return pd.Series(df.score.values, index=df.username).to_dict()
-            except pd.errors.EmptyDataError:
-                return {}
-        else:
-            return {}
-
-    def write_leaderboard_data(self):
-        df = pd.DataFrame(list(self.leaderboard.items()), columns=['username', 'score'])
-        df.to_csv(self.leaderboard_file, index=False)

@@ -8,6 +8,7 @@ from press_start_state import PressStartState
 from playing_state import PlayingState
 from game_over_state import GameOverState
 from leaderboard_state import LeaderboardState
+import leaderboard
 
 BAUD_RATE = 115200
 DEAD_ZONE = 0.1
@@ -32,6 +33,8 @@ class Game:
 
         # Internal render surface
         self.screen = pygame.Surface((self.width, self.height))
+
+        leaderboard.init()
 
         self.clock = pygame.time.Clock()
         self.running = True

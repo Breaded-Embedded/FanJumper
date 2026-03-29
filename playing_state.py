@@ -96,13 +96,18 @@ class PlayingState(GameState):
         # Draw HUD only if playing
         if self.game.current_state is self:
             # Current Score
-            text = self.game.font.render(f"{self.score}m", True, (255, 255, 255))
-            rect = text.get_rect(center=(self.game.width//2, self.game.hud_height // 2))
-            self.game.screen.blit(text, rect)
+            score_text = self.game.font.render(f"{self.score}m", True, (255, 255, 255))
+            rect = score_text.get_rect(center=(self.game.width//2, self.game.hud_height // 2))
+            self.game.screen.blit(score_text, rect)
 
             # Lives Remaining
             for i in range(self.lives - 1):
                 self.game.screen.blit(self.game.sprites['hat_1'], (i * 20, 2))
+            
+            # High Score
+            high_score_text = self.game.font.render(f"HI 999", True, (255, 255, 255))
+            rect = high_score_text.get_rect(midright=(self.game.width - 4, self.game.hud_height // 2))
+            self.game.screen.blit(high_score_text, rect)
 
     def on_death(self):
         self.lives = self.lives - 1
