@@ -128,12 +128,11 @@ class Game:
                 try:
                     data = json.loads(candidate)
                     if 'x' in data:
-                        was_in_dead_zone = abs(data['x']) < DEAD_ZONE
                         x = ((data['x'] / JOYSTICK_MAX) - 0.5) * 2.0
                         if (abs(x) < DEAD_ZONE):
                             x = 0
                         else:
-                            if was_in_dead_zone:
+                            if self.controller['x'] == 0:
                                 self.current_state.handle_joystick_pressed()
                         self.controller['x'] = x
                     if 'y' in data:
