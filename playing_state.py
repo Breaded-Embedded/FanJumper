@@ -21,6 +21,7 @@ class PlayingState(GameState):
 
         self.camera_x = 0
         self.score = int(self.camera_x / 10)
+        self.personal_best = 0
         self.lives = MAX_LIVES
 
         self.player.rect.x = 50
@@ -101,6 +102,11 @@ class PlayingState(GameState):
             rect = score_text.get_rect(center=(self.game.width//2, self.game.hud_height // 2))
             self.game.screen.blit(score_text, rect)
 
+            # Personal Best
+            score_text = self.game.font.render(f"PB {self.personal_best}m", True, (255, 255, 100))
+            rect = score_text.get_rect(midleft=((MAX_LIVES-1) * 20 + 4, self.game.hud_height // 2))
+            self.game.screen.blit(score_text, rect)
+
             # Lives Remaining
             for i in range(self.lives - 1):
                 self.game.screen.blit(self.game.sprites['hat_1'], (i * 20, 2))
@@ -112,12 +118,17 @@ class PlayingState(GameState):
 
     def on_death(self):
         self.lives = self.lives - 1
+    
+        if self.score > self.personal_best:
+            self.personal_best = self.score
         
         if self.lives > 0:
             # Respawn
             tmp_lives = self.lives
+            tmp_pb = self.personal_best
             self.reset()
             self.lives = tmp_lives
+            self.personal_best = tmp_pb
         else:
             # Game Over!
             self.game.change_state(self.game.states['game_over'])

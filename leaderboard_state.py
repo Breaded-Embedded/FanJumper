@@ -13,7 +13,7 @@ class LeaderboardState(GameState):
 
     def enter(self):
         self.current_username = self.generate_unique_username()
-        score = self.game.states["playing"].score
+        score = self.game.states["playing"].personal_best
         leaderboard.data[self.current_username] = int(score)
         leaderboard.save()
 
