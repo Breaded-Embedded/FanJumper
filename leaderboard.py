@@ -26,8 +26,15 @@ def _read_data():
         return {}
 
 def load():
+    global data
     data = _read_data()
 
 def save():
     df = pd.DataFrame(list(data.items()), columns=['username', 'score'])
     df.to_csv(LEADERBOARD_FILE, index=False)
+
+def get_high_score() -> int:
+    if len(data) > 0:
+        return max(data.values())
+    else:
+        return 0

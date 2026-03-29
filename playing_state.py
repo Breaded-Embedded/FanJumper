@@ -5,6 +5,7 @@ import pygame
 from game_state import GameState
 from player import Player
 from floating_platform import Platform, MovingPlatform
+import leaderboard
 
 MAX_LIVES = 3
 
@@ -105,7 +106,7 @@ class PlayingState(GameState):
                 self.game.screen.blit(self.game.sprites['hat_1'], (i * 20, 2))
             
             # High Score
-            high_score_text = self.game.font.render(f"HI 999", True, (255, 255, 255))
+            high_score_text = self.game.font.render(f"HI {leaderboard.get_high_score()}m", True, (100, 100, 200))
             rect = high_score_text.get_rect(midright=(self.game.width - 4, self.game.hud_height // 2))
             self.game.screen.blit(high_score_text, rect)
 
