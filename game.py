@@ -170,6 +170,8 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    self.running = False
                 else:
                     self.current_state.handle_event(event)
 
