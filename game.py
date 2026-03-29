@@ -17,7 +17,7 @@ FAN_MIN = 10
 FAN_MAX = 100
 
 class Game:
-    def __init__(self, width=320, height=200, title="Fan Jumper"):
+    def __init__(self, width=320, height=180, title="Fan Jumper"):
         pygame.init()
 
         self.width = width
@@ -25,7 +25,7 @@ class Game:
         self.title = title
 
         # Resizable window
-        self.window = pygame.display.set_mode((1920, 1200), pygame.FULLSCREEN)
+        self.window = pygame.display.set_mode((1920 //2, 1200//2))
         pygame.display.set_caption(self.title)
 
         # Internal render surface
@@ -60,7 +60,7 @@ class Game:
         self.font = pygame.font.Font("assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 8)
         self.sprites = self.load_sprites()
         pygame.mixer.music.load("assets/music/DayAndNight.wav")
-        pygame.mixer.music.play()
+        pygame.mixer.music.play(loops=-1)
 
         # Create game states
         self.states = {
@@ -90,6 +90,7 @@ class Game:
             sprites['hat_1'] = pygame.image.load('assets/sprites/hat_1.png').convert_alpha()
             sprites['flying_0'] = pygame.image.load('assets/sprites/flying_0.png').convert_alpha()
             sprites['flying_1'] = pygame.image.load('assets/sprites/flying_1.png').convert_alpha()
+            sprites['game_title'] = pygame.image.load('assets/sprites/game_title.png').convert_alpha()
         except pygame.error as e:
             print(f"Error loading image: {e}")
             pygame.quit()

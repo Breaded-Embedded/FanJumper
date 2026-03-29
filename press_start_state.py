@@ -12,13 +12,15 @@ class PressStartState(GameState):
     def draw(self):
         self.game.states['playing'].draw()
 
-        text = self.game.font.render("PROPELLER BOY!", True, (0,0,0))
-        rect = text.get_rect(center=(self.game.width//2, 100))
-        self.game.screen.blit(text, rect)
-
         text = self.game.font.render("PRESS ANY KEY TO START", True, (0,0,0))
         rect = text.get_rect(center=(self.game.width//2, self.game.height//2))
         self.game.screen.blit(text, rect)
+
+        # Game Title
+        title = self.game.sprites['game_title']
+        rect = title.get_rect(midbottom=(self.game.width // 2, self.game.height // 2 - 20))
+        self.game.screen.blit(title, rect)
+
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
