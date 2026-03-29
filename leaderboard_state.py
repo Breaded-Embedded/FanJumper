@@ -1,3 +1,4 @@
+import random
 import pygame
 import re
 
@@ -5,7 +6,7 @@ from game_state import GameState
 import utils
 import leaderboard
 
-USERNAME_NUMBER_RE = re.compile(r'[^\d](\d+)$')
+USERNAME_NUMBER_RE = re.compile(r'[^\d]+(\d+)$')
 
 class LeaderboardState(GameState):
     def reset(self):
@@ -22,11 +23,14 @@ class LeaderboardState(GameState):
 
     def generate_unique_username(self) -> str:
         new_username = utils.generate_username()
-        while new_username in leaderboard.data:
+        while new_username in leaderboard.data.keys():
+            random_number = random.randint(1, 99)
             m = USERNAME_NUMBER_RE.match(new_username)
             if m:
                 number = m.group(1)
-                new_username[m.start(number):m.end(number)] = str(int(number) + 1)
+                new_username = new_username[:m.start(1)] + str(random_number) + new_username[m.end(1):]
+            else:
+                new_username += str(random_number)
         return new_username
 
     def format_column_string(self, values: list[tuple[str, int]]) -> str:
