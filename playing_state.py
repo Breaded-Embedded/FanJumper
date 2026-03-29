@@ -11,6 +11,7 @@ MAX_LIVES = 3
 class PlayingState(GameState):
     def init(self):
         self.player = Player(self.game, self.game.sprites, 200, 100)
+        self.state = 0
 
     def reset(self):
         starting_platform = Platform(0, self.game.height-10, 130, 10)
@@ -75,7 +76,7 @@ class PlayingState(GameState):
 
         # game over condition
         if self.player.rect.y > self.game.height + 50:
-            self.game.change_state(self.game.states['game_over'])
+            self.on_death()
         
         self.score = int(self.camera_x / 10)
 
@@ -103,4 +104,14 @@ class PlayingState(GameState):
             for i in range(self.lives - 1):
                 self.game.screen.blit(self.game.sprites['hat_1'], (i * 20, 2))
 
-
+    def on_death(self):
+        self.lives = self.lives - 1
+        
+        if self.lives > 0:
+            # Respawn
+            tmp_lives = self.lives
+            self.reset()
+            self.lives = tmp_lives
+        else:
+            # Game Over!
+            self.game.change_state(self.game.states['game_over'])
