@@ -62,7 +62,7 @@ class LeaderboardState(GameState):
             placement = i+1
             entry_string = self.format_column_string([
                 (f"{placement}.", 3),
-                (f"{username}", 12),
+                (f"{str.upper(username)}", 12),
                 (f"- {score}", 8)
                 ])
             entry_text = self.game.font.render(entry_string, True, color)

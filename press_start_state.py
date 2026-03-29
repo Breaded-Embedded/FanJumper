@@ -27,9 +27,6 @@ class PressStartState(GameState):
         rect = start_text.get_rect(midtop=(self.game.width // 2, self.game.hud_height + (self.game.height - self.game.hud_height) // 2 - total_height // 2 + title_sprite.get_height() + gap_margin))
         self.game.screen.blit(start_text, rect)
 
-        
-
-
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             self.game.change_state(self.game.states['playing'])
