@@ -115,3 +115,10 @@ class PlayingState(GameState):
         else:
             # Game Over!
             self.game.change_state(self.game.states['game_over'])
+
+    def handle_event(self, event):
+        super().handle_event(event)
+        
+        # Reset with 'R'
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+            self.game.change_state(self.game.states['press_start'])
