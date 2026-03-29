@@ -48,7 +48,7 @@ class PlayingState(GameState):
 
         for p in self.platforms:
             if pygame.Rect.colliderect(p.rect, self.player.rect):
-                if self.player.vel_y >= 0 and self.player.rect.bottom - self.player.vel_y <= p.rect.top:
+                if self.player.vel_y >= 0:
                     self.player.rect.bottom = p.rect.top
                     self.player.vel_y = 0
                     self.player.on_ground = True
@@ -87,8 +87,9 @@ class PlayingState(GameState):
 
         self.player.draw(self.game.screen, self.camera_x, self.game.delta_time, self.game.runtime)
         
-        # draw score
-        text = self.game.font.render(f"{self.score}m", True, (255, 255, 255))
-        rect = text.get_rect(center=(self.game.width//2, 20))
-        self.game.screen.blit(text, rect)
+        if self.game.current_state is self:
+            # Draw score if playing state is active
+            text = self.game.font.render(f"{self.score}m", True, (255, 255, 255))
+            rect = text.get_rect(center=(self.game.width//2, 20))
+            self.game.screen.blit(text, rect)
 

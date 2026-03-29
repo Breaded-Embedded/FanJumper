@@ -17,7 +17,7 @@ FAN_MIN = 10
 FAN_MAX = 100
 
 class Game:
-    def __init__(self, width=320, height=180, title="Fan Jumper"):
+    def __init__(self, width=320, height=200, title="Fan Jumper"):
         pygame.init()
 
         self.width = width
@@ -25,7 +25,7 @@ class Game:
         self.title = title
 
         # Resizable window
-        self.window = pygame.display.set_mode((1280, 720), pygame.FULLSCREEN)
+        self.window = pygame.display.set_mode((1920, 1200), pygame.FULLSCREEN)
         pygame.display.set_caption(self.title)
 
         # Internal render surface

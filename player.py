@@ -30,10 +30,11 @@ class Player:
         self.hat_animation = [sprites['hat_0'], sprites['hat_1']]
 
     def update(self, controller, delta_time = 0.0):
-        # Horizontal movement
+        # Ground friction
         if self.on_ground:
             self.vel_x = 0
 
+        # Horizontal movement
         if abs(controller['x']) > 0.0:
             self.vel_x = controller['x'] * self.move_speed
             if controller['x'] > 0.0:
@@ -41,7 +42,7 @@ class Player:
             elif controller['x'] < 0.0:
                 self.dir = -1
         
-        # Jump
+        # Flying
         if (controller['y'] > 0.0):
             self.vel_y -= self.fly_strength
             self.vel_x += self.fly_strength * self.fly_ratio
@@ -50,12 +51,12 @@ class Player:
         else:
             self.state = PlayerState.WALKING
         
+        # Apply gravity
+        self.vel_y += self.gravity
+
         # Apply movement
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
-
-        # Apply gravity
-        self.vel_y += self.gravity
 
         if self.rect.y < 0.0:
             self.rect.y = 0.0

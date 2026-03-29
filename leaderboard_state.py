@@ -35,16 +35,26 @@ class LeaderboardState(GameState):
         self.leaderboard[username] = int(score)
         self.write_leaderboard_data()
 
+    def format_column_string(self, values: list[tuple[str, int]]) -> str:
+        result = ""
+        for (string, width) in values:
+            if len(string) > width:
+                string = string[:width]
+            elif len(string) < width:
+                string += " " * (width - len(string))
+            result += string + " "
+        return result
+
     def draw(self):
         self.game.states['playing'].draw()
 
         text = self.game.font.render("LEADERBOARD", True, (0,0,0))
-        rect = text.get_rect(center=(self.game.width//2, 50))
+        rect = text.get_rect(center=(self.game.width//2, 20))
         self.game.screen.blit(text, rect)
 
         sorted_leaderboard = sorted(self.leaderboard.items(), key=lambda x: x[1], reverse=True)
 
-        start_y = 70
+        start_y = 40
         spacing = 10
 
         flash_on = (pygame.time.get_ticks() // 500) % 2 == 0
@@ -55,12 +65,18 @@ class LeaderboardState(GameState):
             if username == self.curr_username:
                 color = (255, 255, 0) if flash_on else (0, 0, 0)
 
-            entry_text = self.game.font.render(f"{i+1}. {username} - {score}", True, color)
+            placement = i+1
+            entry_string = self.format_column_string([
+                (f"{placement}.", 3),
+                (f"{username}", 8),
+                (f"- {score}", 8)
+                ])
+            entry_text = self.game.font.render(entry_string, True, color)
             entry_rect = entry_text.get_rect(center=(self.game.width // 2, start_y + i * spacing))
             self.game.screen.blit(entry_text, entry_rect)
 
         instruction_text = self.game.font.render("Press any key to return", True, (100, 100, 100))
-        instruction_rect = instruction_text.get_rect(center=(self.game.width // 2, self.game.height - 50))
+        instruction_rect = instruction_text.get_rect(center=(self.game.width // 2, self.game.height - 20))
         self.game.screen.blit(instruction_text, instruction_rect)
 
     def handle_event(self, event):
