@@ -12,14 +12,22 @@ class PressStartState(GameState):
     def draw(self):
         self.game.states['playing'].draw()
 
-        text = self.game.font.render("PRESS ANY KEY TO START", True, (0,0,0))
-        rect = text.get_rect(center=(self.game.width//2, self.game.height//2))
-        self.game.screen.blit(text, rect)
+        # Get surfaces
+        start_text = self.game.font.render("PRESS ANY KEY TO START", True, (0,0,0))
+        title_sprite = self.game.sprites['game_title']
+
+        gap_margin = 16
+        total_height = start_text.get_height() + title_sprite.get_height() + gap_margin
 
         # Game Title
-        title = self.game.sprites['game_title']
-        rect = title.get_rect(midbottom=(self.game.width // 2, self.game.height // 2 - 20))
-        self.game.screen.blit(title, rect)
+        rect = title_sprite.get_rect(midtop=(self.game.width // 2, self.game.hud_height + (self.game.height - self.game.hud_height) // 2 - total_height // 2))
+        self.game.screen.blit(title_sprite, rect)
+
+        # Press Any Key Text
+        rect = start_text.get_rect(midtop=(self.game.width // 2, self.game.hud_height + (self.game.height - self.game.hud_height) // 2 - total_height // 2 + title_sprite.get_height() + gap_margin))
+        self.game.screen.blit(start_text, rect)
+
+        
 
 
     def handle_event(self, event):

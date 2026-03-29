@@ -9,7 +9,8 @@ class PlayerState(Enum):
 
 
 class Player:
-    def __init__(self, sprites: list[pygame.Surface], x=100, y=100):
+    def __init__(self, game, sprites: list[pygame.Surface], x=100, y=100):
+        self.game = game
         self.sprites = sprites
         self.rect = self.sprites['player_0'].get_rect(topleft=(x, y))
 
@@ -58,8 +59,8 @@ class Player:
         self.rect.x += self.vel_x
         self.rect.y += self.vel_y
 
-        if self.rect.y < 0.0:
-            self.rect.y = 0.0
+        if self.rect.y < self.game.hud_height:
+            self.rect.y = self.game.hud_height
             self.vel_y = 0.0
 
     def draw(self, screen, camera_x: float, delta_time = 0.0, runtime = 0.0):

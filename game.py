@@ -24,6 +24,8 @@ class Game:
         self.height = height
         self.title = title
 
+        self.hud_height = 16 # Size of the HUD on the top of the screen
+
         # Resizable window
         self.window = pygame.display.set_mode((1920 //2, 1200//2))
         pygame.display.set_caption(self.title)

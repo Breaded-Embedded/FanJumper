@@ -6,10 +6,11 @@ from game_state import GameState
 from player import Player
 from floating_platform import Platform, MovingPlatform
 
+MAX_LIVES = 3
 
 class PlayingState(GameState):
     def init(self):
-        self.player = Player(self.game.sprites, 200, 100)
+        self.player = Player(self.game, self.game.sprites, 200, 100)
 
     def reset(self):
         starting_platform = Platform(0, self.game.height-10, 130, 10)
@@ -18,6 +19,7 @@ class PlayingState(GameState):
 
         self.camera_x = 0
         self.score = int(self.camera_x / 10)
+        self.lives = MAX_LIVES
 
         self.player.rect.x = 50
         self.player.rect.y = self.game.height - 30
@@ -87,9 +89,18 @@ class PlayingState(GameState):
 
         self.player.draw(self.game.screen, self.camera_x, self.game.delta_time, self.game.runtime)
         
+        # HUD Bar
+        pygame.draw.rect(self.game.screen, (0, 0, 0), (0, 0, self.game.width, self.game.hud_height))
+
+        # Draw HUD only if playing
         if self.game.current_state is self:
-            # Draw score if playing state is active
+            # Current Score
             text = self.game.font.render(f"{self.score}m", True, (255, 255, 255))
-            rect = text.get_rect(center=(self.game.width//2, 20))
+            rect = text.get_rect(center=(self.game.width//2, self.game.hud_height // 2))
             self.game.screen.blit(text, rect)
+
+            # Lives Remaining
+            for i in range(self.lives - 1):
+                self.game.screen.blit(self.game.sprites['hat_1'], (i * 20, 2))
+
 

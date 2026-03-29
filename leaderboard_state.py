@@ -48,8 +48,8 @@ class LeaderboardState(GameState):
     def draw(self):
         self.game.states['playing'].draw()
 
-        text = self.game.font.render("LEADERBOARD", True, (0,0,0))
-        rect = text.get_rect(center=(self.game.width//2, 20))
+        text = self.game.font.render("LEADERBOARD", True, (255, 255, 255))
+        rect = text.get_rect(center=(self.game.width // 2, self.game.hud_height // 2))
         self.game.screen.blit(text, rect)
 
         sorted_leaderboard = sorted(self.leaderboard.items(), key=lambda x: x[1], reverse=True)
