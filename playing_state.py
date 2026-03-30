@@ -17,7 +17,9 @@ class PlayingState(GameState):
     def reset(self):
         starting_platform = Platform(0, self.game.height-10, 130, 10)
         self.platforms = [starting_platform]
+        self.bombs = []
         self.last_platform_x = starting_platform.rect.x + starting_platform.rect.width
+        self.last_bomb_x = 0
 
         self.camera_x = 0
         self.score = int(self.camera_x / 10)
@@ -48,6 +50,13 @@ class PlayingState(GameState):
         self.platforms.append(p)
         self.last_platform_x = x + width
 
+    def spawn_bomb(self):
+        bomb_size = self.game.sprites['bomb'].get_rect().width
+        x = self.last_bomb_x + random.randint(100, 600)
+        y = random.randint(0, self.game.height - self.game.hud_height - bomb_size)
+        self.bombs.append(self.game.sprites['bomb'].get_rect(topleft=(x, y)))
+        self.last_bomb_x = x + bomb_size
+
     def update(self):
         self.player.update(self.game.controller)
 
@@ -57,6 +66,11 @@ class PlayingState(GameState):
                     self.player.rect.bottom = p.rect.top
                     self.player.vel_y = 0
                     self.player.on_ground = True
+
+        for b in self.bombs:
+            if pygame.Rect.colliderect(b, self.player.rect):
+                self.on_death()
+                return
 
         for p in self.platforms:
             p.update()
@@ -69,6 +83,10 @@ class PlayingState(GameState):
         # spawn platforms
         while self.last_platform_x < self.camera_x + self.game.width * 2:
             self.spawn_platform()
+        
+        # Spawn bombs
+        while self.last_bomb_x < self.camera_x + self.game.width * 2:
+            self.spawn_bomb()
 
         # cleanup
         self.platforms = [
@@ -89,6 +107,10 @@ class PlayingState(GameState):
             screen_x = p.rect.x - self.camera_x
             pygame.draw.rect(self.game.screen, (60, 60, 60),
                             (screen_x, p.rect.y, p.rect.w, p.rect.h))
+
+        for b in self.bombs:
+            screen_x = b.x - self.camera_x
+            self.game.screen.blit(self.game.sprites['bomb'], (screen_x, b.y, b.w, b.h))
 
         self.player.draw(self.game.screen, self.camera_x, self.game.delta_time, self.game.runtime)
         

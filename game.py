@@ -96,6 +96,7 @@ class Game:
             sprites['flying_0'] = pygame.image.load('assets/sprites/flying_0.png').convert_alpha()
             sprites['flying_1'] = pygame.image.load('assets/sprites/flying_1.png').convert_alpha()
             sprites['game_title'] = pygame.image.load('assets/sprites/game_title.png').convert_alpha()
+            sprites['bomb'] = pygame.image.load('assets/sprites/bomb.png').convert_alpha()
         except pygame.error as e:
             print(f"Error loading image: {e}")
             pygame.quit()
