@@ -73,7 +73,7 @@ class LeaderboardState(GameState):
             entry_rect = entry_text.get_rect(center=(self.game.width // 2, start_y + i * spacing))
             self.game.screen.blit(entry_text, entry_rect)
 
-        instruction_text = self.game.font.render("PRESS ANY KEY TO RETURN", True, (100, 100, 100))
+        instruction_text = self.game.font.render("PRESS ANY KEY TO RETURN", True, (0, 0, 0))
         instruction_rect = instruction_text.get_rect(center=(self.game.width // 2, self.game.height - 20))
         self.game.screen.blit(instruction_text, instruction_rect)
 
