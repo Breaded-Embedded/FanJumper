@@ -43,23 +43,23 @@ class Game:
         self.controller = {"x": 0, "y": 0, "button": 0}
         self._serial_buf = ""
 
-        print("AVAILABLE PORTS:")
-        ports = serial.tools.list_ports.comports()
-        for port, desc, hwid in sorted(ports):
-            print(f" - {port}: {desc} [{hwid}]")
-
-        port = None
         self.serial = None
+        ports = serial.tools.list_ports.comports()
         if len(ports) > 0:
-            _,_,hwid = ports[0]
-            print(f"Connecting to port {port}")
+            print("AVAILABLE PORTS:")
+            for port, desc, hwid in sorted(ports):
+                print(f" - {port}: {desc} [{hwid}]")
+            
+            if len(ports) > 0:
+                port = ports[0]
+                print(f"Connecting to port {port.device}")
 
-            try:
-                self.serial = serial.Serial('COM3', BAUD_RATE, timeout=0)
-                print(f"Serial connected on {port}")
-            except serial.SerialException as e:
-                print(f"Serial connection failed: {e}")
-                self.serial = None
+                try:
+                    self.serial = serial.Serial(port.device, BAUD_RATE, timeout=0)
+                    print(f"Serial connected on {port.device}")
+                except serial.SerialException as e:
+                    print(f"Serial connection failed: {e}")
+                    self.serial = None
 
         # Load resources
         self.font = pygame.font.Font("assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf", 8)
@@ -106,6 +106,7 @@ class Game:
     def read_serial(self):
         """Non-blocking serial read. Accumulates chars into a buffer,
         parses complete JSON objects, and updates self.controller."""
+
         if not self.serial or not self.serial.is_open:
             return
 
