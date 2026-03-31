@@ -15,6 +15,8 @@ class PlayingState(GameState):
         self.state = 0
 
     def reset(self):
+        random.seed(88)
+
         starting_platform = Platform(0, self.game.height-10, 130, 10)
         self.platforms = [starting_platform]
         self.bombs = []
