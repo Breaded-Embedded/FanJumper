@@ -17,9 +17,9 @@ class Player:
         # physics
         self.vel_x = 0
         self.vel_y = 0
-        self.gravity = 0.4
-        self.move_speed = 3
-        self.fly_strength = 0.5
+        self.gravity = 24
+        self.move_speed = 180
+        self.fly_strength = 30
         self.fly_ratio = 0.15
         self.dir = 1
 
@@ -37,7 +37,7 @@ class Player:
 
         # Horizontal movement
         if abs(controller['x']) > 0.0:
-            self.vel_x = controller['x'] * self.move_speed
+            self.vel_x = controller['x'] * self.move_speed * delta_time
             if controller['x'] > 0.0:
                 self.dir = 1
             elif controller['x'] < 0.0:
@@ -45,15 +45,15 @@ class Player:
         
         # Flying
         if (controller['y'] > 0.0):
-            self.vel_y -= self.fly_strength
-            self.vel_x += self.fly_strength * self.fly_ratio
+            self.vel_y -= self.fly_strength * delta_time
+            self.vel_x += self.fly_strength * self.fly_ratio * delta_time
             self.state = PlayerState.FLYING
             self.on_ground = False
         else:
             self.state = PlayerState.WALKING
         
         # Apply gravity
-        self.vel_y += self.gravity
+        self.vel_y += self.gravity * delta_time
 
         # Apply movement
         self.rect.x += self.vel_x

@@ -7,10 +7,10 @@ from game_state import GameState
 class GameOverState(GameState):
 
     def reset(self):
-        self.timer = 0
+        self.timer = 0.0
 
     def update(self):
-        self.timer += 1
+        self.timer += 60.0 * self.game.delta_time
 
     def handle_joystick_pressed(self):
         self.game.change_state(self.game.states['leaderboard'])

@@ -58,7 +58,7 @@ class PlayingState(GameState):
         self.last_bomb_x = x + bomb_size
 
     def update(self):
-        self.player.update(self.game.controller)
+        self.player.update(self.game.controller, self.game.delta_time)
 
         for p in self.platforms:
             if pygame.Rect.colliderect(p.rect, self.player.rect):
