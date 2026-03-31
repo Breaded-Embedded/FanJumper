@@ -52,18 +52,31 @@ class LeaderboardState(GameState):
 
         sorted_leaderboard = sorted(leaderboard.data.items(), key=lambda x: x[1], reverse=True)
 
+        # Get the current user's index in the leaderboard
+        user_index = 0
+        for i, (username, score) in enumerate(sorted_leaderboard):
+            if username == self.current_username:
+                user_index = i
+        
+        # Determine the first and last entries to display
+        start_index = max(user_index - 5, 0)
+        end_index = start_index + 10
+        if len(sorted_leaderboard) > 10 and end_index > len(sorted_leaderboard):
+            end_index = len(sorted_leaderboard)
+            start_index = end_index - 10
+
         start_y = 40
         spacing = 10
 
         flash_on = (pygame.time.get_ticks() // 500) % 2 == 0
 
-        for i, (username, score) in enumerate(sorted_leaderboard[:10]):
+        for i, (username, score) in enumerate(sorted_leaderboard[start_index:end_index]):
             color = (0, 0, 0)
 
             if username == self.current_username:
                 color = (255, 255, 0) if flash_on else (0, 0, 0)
 
-            placement = i+1
+            placement = i + start_index + 1
             entry_string = self.format_column_string([
                 (f"{placement}.", 3),
                 (f"{str.upper(username)}", 12),
