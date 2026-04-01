@@ -46,14 +46,17 @@ class Game:
         self.serial = None
         ports = serial.tools.list_ports.comports()
         if len(ports) > 0:
+            port = None
             print("AVAILABLE PORTS:")
-            for port, desc, hwid in sorted(ports):
-                print(f" - {port}: {desc} [{hwid}]")
+            for p in sorted(ports):
+                selected_text = ""
+                if port is None and "arduino" in p.description.lower():
+                    port = p
+                    selected_text = " (Selected)"
+                print(f" - {p.device}: {p.description} [{p.hwid}]" + selected_text)
             
-            if len(ports) > 0:
-                port = ports[0]
+            if port is not None:
                 print(f"Connecting to port {port.device}")
-
                 try:
                     self.serial = serial.Serial(port.device, BAUD_RATE, timeout=0)
                     print(f"Serial connected on {port.device}")
