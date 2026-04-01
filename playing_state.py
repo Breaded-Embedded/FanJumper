@@ -63,14 +63,14 @@ class PlayingState(GameState):
         self.player.update(self.game.controller, self.game.delta_time)
 
         for p in self.platforms:
-            if pygame.Rect.colliderect(p.rect, self.player.rect):
+            if pygame.Rect.colliderect(p.rect, self.player.get_hitbox()):
                 if self.player.vel_y >= 0:
                     self.player.rect.bottom = p.rect.top
                     self.player.vel_y = 0
                     self.player.on_ground = True
 
         for b in self.bombs:
-            if pygame.Rect.colliderect(b, self.player.rect):
+            if pygame.Rect.colliderect(b, self.player.get_hitbox()):
                 self.on_death()
                 return
 

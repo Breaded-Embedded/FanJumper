@@ -81,3 +81,8 @@ class Player:
             hat_frame = int(runtime * 4.0) % len(self.hat_animation)
             sprite = self.hat_animation[hat_frame]
             screen.blit(pygame.transform.flip(sprite, self.dir == -1, False), (player_screen_x, self.rect.y + (1 if frame == 1 else 0)))
+
+    def get_hitbox(self) -> pygame.Rect:
+        hitbox = pygame.Rect(0, 0, self.rect.width - 4, self.rect.height - 4)
+        hitbox.midbottom = self.rect.midbottom
+        return hitbox
