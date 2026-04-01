@@ -55,7 +55,7 @@ class PlayingState(GameState):
     def spawn_bomb(self):
         bomb_size = self.game.sprites['bomb'].get_rect().width
         x = self.last_bomb_x + random.randint(100, 600)
-        y = random.randint(0, self.game.height - self.game.hud_height - bomb_size)
+        y = random.randint(self.game.hud_height, self.game.height - self.game.hud_height - bomb_size)
         self.bombs.append(self.game.sprites['bomb'].get_rect(topleft=(x, y)))
         self.last_bomb_x = x + bomb_size
 
