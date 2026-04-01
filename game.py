@@ -10,7 +10,7 @@ from game_over_state import GameOverState
 from leaderboard_state import LeaderboardState
 import leaderboard
 
-BAUD_RATE = 9600
+BAUD_RATE = 115200
 DEAD_ZONE = 0.1
 JOYSTICK_MAX = 1024
 
