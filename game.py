@@ -17,6 +17,8 @@ JOYSTICK_MAX = 1024
 FAN_MIN = 10
 FAN_MAX = 100
 
+pygame.mixer.pre_init(22050, -16, 1, 32)
+
 class Game:
     def __init__(self, width=320, height=180, title="Fan Jumper"):
         pygame.init()
