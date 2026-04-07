@@ -21,7 +21,7 @@ FAN_MAX = 100
 pygame.mixer.pre_init(22050, -16, 1, 32)
 
 class Game:
-    def __init__(self, width=320, height=180, title="Fan Jumper"):
+    def __init__(self, width=320, height=200, title="Fan Jumper"):
         pygame.init()
 
         self.width = width
@@ -31,7 +31,7 @@ class Game:
         self.hud_height = 16 # Size of the HUD on the top of the screen
 
         # Resizable window
-        self.window = pygame.display.set_mode((1920 //2, 1200//2))
+        self.window = pygame.display.set_mode((1920, 1200), pygame.FULLSCREEN)
         pygame.display.set_caption(self.title)
 
         # Internal render surface
