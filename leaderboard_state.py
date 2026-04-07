@@ -127,3 +127,4 @@ class LeaderboardState(GameState):
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN or event.type == pygame.JOYBUTTONDOWN:
             self.game.change_state(self.game.states['press_start'])
+            self.game.states['playing'].reset()

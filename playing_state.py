@@ -3,7 +3,7 @@ import random
 import pygame
 
 from game_state import GameState
-from player import Player
+from player import Player, PlayerState
 from floating_platform import Platform, MovingPlatform
 import leaderboard
 
@@ -32,6 +32,7 @@ class PlayingState(GameState):
         self.player.rect.y = self.game.height - 30
         self.player.vel_x = 0
         self.player.vel_y = 0
+        self.player.state = PlayerState.WALKING
         
         for _ in range(4):
             self.spawn_platform()
