@@ -41,6 +41,12 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        # Initialize joysticks
+        pygame.joystick.init()
+        self.joysticks = [pygame.joystick.Joystick(i) for i in range(pygame.joystick.get_count())]
+        if len(self.joysticks) > 0:
+            print(f"Joysticks connected: {len(self.joysticks)}")
+
         # Serial controller input state
         self.controller = {"x": 0, "y": 0, "button": 0}
         self._serial_buf = ""
@@ -139,7 +145,7 @@ class Game:
 
                 try:
                     data = json.loads(candidate)
-                    if 'x' in data:
+                    if 'x' in data and len(self.joysticks) == 0:
                         x = ((data['x'] / JOYSTICK_MAX) - 0.5) * 2.0
                         if (abs(x) < DEAD_ZONE):
                             x = 0
@@ -185,21 +191,35 @@ class Game:
                 else:
                     self.current_state.handle_event(event)
 
-            if self.serial is None:
-                keys = pygame.key.get_pressed()
+            keys = pygame.key.get_pressed()
 
+            # Horizontal Movement
+            if len(self.joysticks) > 0:
+                # Prefer joystick above all else
+                x = self.joysticks[-1].get_axis(0)
+                if (abs(x) < DEAD_ZONE):
+                    x = 0
+                else:
+                    x = 1 if x > 0 else -1
+                    if self.controller['x'] == 0:
+                        self.current_state.handle_joystick_pressed()
+                self.controller['x'] = x
+            elif self.serial is None:
+                # Use keys if no serial connection
                 self.controller['x'] = 0
-                self.controller['y'] = 0
-
-                # Horizontal movement
                 if keys[pygame.K_a] or keys[pygame.K_LEFT]:
                     self.controller['x'] = -1
                 if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
                     self.controller['x'] = 1
-                
-                # Jump
+
+            # Vertical Movement
+            if self.serial is None:
+                # Use keys if no serial connection
+                self.controller['y'] = 0
                 if (keys[pygame.K_SPACE] or keys[pygame.K_w] or keys[pygame.K_UP]):
                     self.controller['y'] = 1
+
+            if self.serial is None:
                 print(f"Controller (keyboard): {self.controller}")
 
             # Non-blocking serial read — updates self.controller if new data arrived
