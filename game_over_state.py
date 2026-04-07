@@ -41,5 +41,5 @@ class GameOverState(GameState):
             self.game.screen.blit(text, rect)
 
     def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN or event.type == pygame.JOYBUTTONDOWN:
             self.game.change_state(self.game.states['leaderboard'])

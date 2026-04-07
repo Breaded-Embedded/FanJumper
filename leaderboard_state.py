@@ -125,5 +125,5 @@ class LeaderboardState(GameState):
         self.game.screen.blit(instruction_text, instruction_rect)
 
     def handle_event(self, event):
-        if event.type == pygame.KEYDOWN:
+        if event.type == pygame.KEYDOWN or event.type == pygame.JOYBUTTONDOWN:
             self.game.change_state(self.game.states['press_start'])
