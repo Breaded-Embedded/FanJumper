@@ -27,6 +27,16 @@ class PressStartState(GameState):
         rect = start_text.get_rect(midtop=(self.game.width // 2, self.game.hud_height + (self.game.height - self.game.hud_height) // 2 - total_height // 2 + title_sprite.get_height() + gap_margin))
         self.game.screen.blit(start_text, rect)
 
+        # Credits Hint
+        text = self.game.font.render("Press Select to Show Credits", True, (255, 255, 255))
+        rect = text.get_rect(midleft=(5, self.game.hud_height//2))
+        self.game.screen.blit(text, rect)
+
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             self.game.change_state(self.game.states['playing'])
+        elif event.type == pygame.JOYBUTTONDOWN:
+            if event.button == 7 or event.button == 6 or event.button == 9:
+                self.game.change_state(self.game.states['credits'])
+            else:
+                self.game.change_state(self.game.states['playing'])

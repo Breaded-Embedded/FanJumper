@@ -8,6 +8,7 @@ from press_start_state import PressStartState
 from playing_state import PlayingState
 from game_over_state import GameOverState
 from leaderboard_state import LeaderboardState
+from credits_state import CreditsState
 import leaderboard
 
 BAUD_RATE = 115200
@@ -83,7 +84,8 @@ class Game:
             'press_start': PressStartState(self),
             'playing': PlayingState(self),
             'game_over': GameOverState(self),
-            'leaderboard': LeaderboardState(self)
+            'leaderboard': LeaderboardState(self),
+            'credits': CreditsState(self)
         }
 
         # Set current state
@@ -108,6 +110,7 @@ class Game:
             sprites['flying_1'] = pygame.image.load('assets/sprites/flying_1.png').convert_alpha()
             sprites['game_title'] = pygame.image.load('assets/sprites/game_title.png').convert_alpha()
             sprites['bomb'] = pygame.image.load('assets/sprites/bomb.png').convert_alpha()
+            sprites['qr_code'] = pygame.image.load('assets/sprites/qr-code.png').convert_alpha()
         except pygame.error as e:
             print(f"Error loading image: {e}")
             pygame.quit()
